@@ -1,0 +1,27 @@
+trytol4
+0  					!stationary flag  1=stationary 0=non
+0,0,1                                   !p,plow,phigh
+0,0,1                                   !q,qlow,qhigh
+2,2                                     !nRKorder,nRKstage
+0                                       !slope limiter flag
+0.5                                       !time step size in seconds
+100                                       !Total number of time steps
+0                                       !DivSigmaFlag
+0                                       !DivThetaFlag
+0                                       !thetaoddflag
+9                                       !non fatal override 1=override 0=stop
+0                                       !Flag_WetDryElem
+1                                       !p_d    dofd
+0                                       !readeta64
+0                                       !p_u     dofu
+0                                       !readcurrent64
+0,0,0,0,0,0                             !aux,bux,cux,auy,buy,cuy where ux(x)=aux*x+bux*y+cux
+0                                       !fullcirc flag 0=sector
+20,80,100                               !number of theta elem,thetamin,thetamax
+80,0.05,0.25                            !number of sig elem, sigmamin, sigmamax
+1,1,1,1,1,0,0,0,0,0,0,0                 !x,y,depth,HS,DIR,TM01,TM02,RTM01,RTP,HSmax,HSmin,HSdif
+2500                                       !Radiation time step
+1                                       !number of incoming boundary conditions
+1                                       !bc number
+1                                       !bc type
+1,10,0.01,90,500                        !HSbc(i),PKPER(i),SIGFR(i),MDIR(i),MS(i)
