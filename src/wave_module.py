@@ -1,5 +1,20 @@
 import numpy as np
 
+#structures for geographic mesh
+class node_type:
+    def __init__(self, num_nodes):
+        self.x = np.empty(num_nodes)
+        self.y = np.empty(num_nodes)
+        self.no_elem = np.zeros(num_nodes)
+class elem_type:
+    def __init__(self, num_elem):
+        self.node= np.zeros((num_elem,3))
+        self.area=99.9
+        self.global_edge=np.zeros((num_elem,3))
+        self.global_elem=0
+        self.global_vert=np.zeros((num_elem,3))
+
+
 #allocating variables
 def init():
     global pi
@@ -108,7 +123,7 @@ def init():
     
 
     ##structures for geographic mesh
-    #WILL BE DONE LATER
+    # (declared at top)
 
 
 
@@ -228,7 +243,7 @@ def init():
     time_c2=float(99)
     global current_time_step, current_64_ic, nof_data_sets_u
     current_time_step=99
-    current_64_ic
+    current_64_ic=99
     nof_data_sets_u=99
     global dof_d,p_d,read_eta_63,time_varying_depth
     dof_d=99
@@ -241,7 +256,7 @@ def init():
     bath_coef=np.empty((9,9))
     global ux_coef,uy_coef
     ux_coef=np.empty((9,9))
-    uy_coef=np.wmpty((9,9))
+    uy_coef=np.empty((9,9))
     global aux,bux,cux,auy,buy,cuy #current in physical coord ux(x)-aux*x+bux*y+cux
     aux=float(99)
     bux=float(99)
@@ -255,10 +270,84 @@ def init():
 
     #variables for quadrature points
     ##WILL BE COMPLETED LATER
+    global num_quad_XY_area #number of xy area quadrature points (for each value of p)
+    num_quad_XY_area = np.empty(9)
+    global x_QP_area, y_QP_area #x and y area quadrature points
+    x_QP_area = np.empty((9,9))
+    y_QP_area = np.empty((9,9))
+    global weight_XY_area #quadrature weights for XY area
+    weight_XY_area = np.empty((9,9)) 
+    global num_quad_xy_edge #number of xy edge quadrature points
+    num_quad_xy_edge = np.empty(9)
+    global x_QP_edge #x edge quadrature points
+    x_QP_edge = np.empty((9,9))
+    global weight_XY_edge #quadrature weights for XY edge
+    weight_XY_edge = np.empty((9,9))
+    global num_quad_s_edge, num_quad_t_edge, num_quad_sp_area #quadrature points for sigma, theata (edges), spectral(area)
+    num_quad_s_edge = np.empty(9)
+    num_quad_t_edge = np.empty(9)
+    num_quad_sp_area = np.empty(9)
+    global is_QP_edge, it_QP_edge #sigam and theta edge quad pnts
+    is_QP_edge=np.empty((9,9))
+    it_QP_edge=np.empty((9,9))
+    global weight_t_edge, weight_s_edge #weights for sigma and theta edges
+    weight_t_edge=np.empty((9,9))
+    weight_s_edge=np.empty((9,9))
+    global is_QP_area, it_QP_area #sigma and theta area q points
+    is_QP_area=np.empty((9,9))
+    it_QP_are=np.empty((9,9))
+    global weight_SP_area #  spectral area qp weights
+    weight_SP_area=np.empty((9,9))
+    global sigma_QP_edge, sigma_QP_area #actual sigma values at all the quad points
+    sigma_QP_edge=np.empty((3,3,3))
+    sigma_QP_area=np.empty((3,3,3))
+    global theta_QP_edge, theta_QP_area #actual theta values at all quad points
+    theta_QP_edge=np.empty((3,3,3))
+    theta_QP_area=np.empty((3,3,3))
+    global sin_th_QP_edge, sin_th_QP_area #sin of theta
+    sin_th_QP_edge=np.empty((3,3,3))
+    sin_th_QP_area=np.empty((3,3,3))
+    global cos_th_QP_edge, cos_th_QP_area #cos of theta
+    cos_th_QP_edge=np.empty((3,3,3))
+    cos_th_QP_area=np.empty((3,3,3))
 
 
+    #variables for geographoc basis functions
+    global phi_area, ds_phi, dr_phi, phi_corner, phi_mid, phi_center, phi_edge, m_inv, w_phi_area ,w_phi_edge
+    phi_area=np.empty((3,3,3))
+    ds_phi=np.empty((3,3,3))
+    dr_phi=np.empty((3,3,3))
+    phi_corner=np.empty((9,9))
+    phi_mid=np.empty((9,9))
+    phi_center=np.empty((9,9))
+    phi_edge=np.empty((3,3,3,3))
+    m_inv=np.empty(9)
+    w_phi_area=np.empty((3,3,3))
+    w_phi_edge=np.empty((3,3,3,3))
 
-    #variables for stations foroutput
+    #variables for spectral basis
+    global psi_sp, psi_s, psi_t, ds_psi_sp, ds_psi_s, ds_psi_t, dt_psi_sp, dt_psi_s, dt_psi_t, psi_end_s,\
+        psi_end_t, w_psi_sp, w_psi_s1,w_psi_t1, w_psi_s2, w_psi_t2, wds_psi_sp, wdt_psi_sp
+    psi_sp=np.empty((3,3,3))
+    psi_s=np.empty((3,3,3))
+    psi_t=np.empty((3,3,3))
+    ds_psi_sp=np.empty((3,3,3))
+    ds_psi_s=np.empty((3,3,3))
+    ds_psi_t=np.empty((3,3,3))
+    dt_psi_sp=np.empty((3,3,3))
+    dt_psi_s=np.empty((3,3,3))
+    dt_psi_t=np.empty((3,3,3))
+    psi_end_s=np.empty((9,9))
+    psi_end_t=np.empty((9,9))
+    w_psi_sp=np.empty((3,3,3))
+    w_psi_s1=np.empty((3,3,3))
+    w_psi_t1=np.empty((3,3,3))
+    w_psi_s2=np.empty((3,3,3))
+    w_psi_t2=np.empty((3,3,3))
+    wds_psi_sp=np.empty((3,3,3))
+    wdt_psi_sp=np.empty((3,3,3))
+
+    #variables for stations for output
     global num_sta,x_sta,y_sta,elem_sta,phi_sta
     num_sta = 99
     x_sta = np.empty(99)
@@ -267,10 +356,44 @@ def init():
     phi_sta=np.empty((9,9))
     
 
+def wave_alloc_elem_node():
+    global num_nodes,num_elem 
+    global node_info, elem
+    print(num_nodes)
+    print(num_elem)
+    node_info=node_type(num_nodes)
+    elem=elem_type(num_elem)
+
 
 def wave_alloc_boundary():
-    global in_bc_seg
-    global num_in_bc_seg
+    global in_bc_seg, type_bc, HS_bc, pk_per_bc, sig_fr_bc, m_dir_bc, ms_bc, gamma_bc #from wave module
+    global num_in_bc_seg #read from input file
     in_bc_seg=np.empty(num_in_bc_seg)
+    type_bc=np.empty(num_in_bc_seg)
+    HS_bc=np.empty(num_in_bc_seg)
+    pk_per_bc=np.empty(num_in_bc_seg)
+    sig_fr_bc=np.empty(num_in_bc_seg)
+    m_dir_bc=np.empty(num_in_bc_seg)
+    ms_bc=np.empty(num_in_bc_seg)
+    gamma_bc=np.empty(num_in_bc_seg)
 
+def wave_alloc_spectral_mesh():
+    global theta, sigma #from wave_module
+    global num_theta_elem, num_sig_elem #read from input file
+    theta=np.empty(num_theta_elem+1)
+    sigma=np.empty(num_sigma_elem+1)
+
+def wave_alloc_time():
+    global a_RK_SSP,b_RK_SSP, delta_RK
+    global n_RK_stage #read from input
+    a_RK_SSP=np.empty((n_RK_stage,n_RK_stage))
+    b_RK_SSP=np.empty((n_RK_stage,n_RK_stage))
+    delta_RK=np.empty(n_RK_stage)
+
+def wave_alloc_bedges():
+    #ENDED HERE
+
+def wave_p_low_p_high():
+    global num_quad_XY_area, num_quad_XY_edge, dof_XY, dof_SP, num_quad_t_edge, num_quad_s_edge,num_quad_sp_area \
+        p_elem, q_elem, wet_dry_flag
 

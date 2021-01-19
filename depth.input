@@ -9,7 +9,7 @@ trytol4
 0                                       !DivSigmaFlag
 0                                       !DivThetaFlag
 0                                       !thetaoddflag
-9                                       !non fatal override 1=override 0=stop
+69                                      !non fatal override 1=override 0=stop
 0                                       !Flag_WetDryElem
 1                                       !p_d    dofd
 0                                       !readeta64

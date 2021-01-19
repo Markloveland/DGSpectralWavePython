@@ -20,7 +20,5 @@ wm.cth_max=float(-99999)
 
 #read input parameter file
 wm.init()
-print(wm.NF_override)
 wr.wave_ReadInput()
-print(wm.NF_override)
-tst.test()
+
