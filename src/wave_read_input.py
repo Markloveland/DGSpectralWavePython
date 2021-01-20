@@ -89,7 +89,7 @@ def wave_ReadInput():
     wm.rad_stress_time_step=int(fin.readline().split('!')[0])
     wm.num_in_bc_seg=int(fin.readline().split('!')[0])
     wm.wave_alloc_boundary()
-    print(wm.in_bc_seg)
+    
 
 
     

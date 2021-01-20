@@ -406,7 +406,7 @@ def wave_alloc_bedges():
     edge=edges_type(num_edges)
 
 def wave_p_low_p_high():
-    global num_quad_XY_area, num_quad_XY_edge, dof_XY, dof_SP, num_quad_t_edge, num_quad_s_edge,num_quad_sp_area \
+    global num_quad_XY_area, num_quad_XY_edge, dof_XY, dof_SP, num_quad_t_edge, num_quad_s_edge,num_quad_sp_area, \
         p_elem, q_elem, wet_dry_flag
     global p_low, p_high, q_low, q_high, num_elem, num_theta_elem, num_sig_elem
     num_quad_XY_area=np.zeros(p_high)
@@ -452,7 +452,7 @@ def wave_alloc_spectral_qp():
     global is_QP_edge, it_QP_edge, weight_t_edge, weight_s_edge, is_QP_area, it_QP_area, weight_SP_area, \
         sigma_QP_edge, theta_QP_edge, sigma_QP_area, theta_QP_area, sin_th_QP_edge, sin_th_QP_area, \
         cos_th_QP_edge, cos_th_QP_area
-    global num_quad_s_edge, num_quad_t_edge, num_quad_SP_area, 
+    global num_quad_s_edge, num_quad_t_edge, num_quad_SP_area 
     global q_high, num_sig_elem, num_theta_elem
     is_QP_edge = np.empty((num_quad_s_edge[q_high-1],q_high))
     it_QP_edge = np.empty((num_quad_t_edge[q_high-1],q_high))
@@ -473,7 +473,7 @@ def wave_alloc_spectral_qp():
 def wave_alloc_sp_basis():
     global psi_sp, psi_s, psi_t, ds_psi_sp, ds_psi_s, ds_psi_t, dt_psi_sp, dt_psi_s, dt_psi_t, psi_end_s, \
         psi_end_t, n_bc, n_bc_alpha, w_psi_sp, w_psi_s1, w_psi_t1, w_psi_s2, w_psi_t2, wds_psi_sp, wdt_psi_sp
-    global dof_SP, num_quad_SP_area, num_quad_s_edge, num_quad_t_edge,
+    global dof_SP, num_quad_SP_area, num_quad_s_edge, num_quad_t_edge
     global q_high, num_theta_elem, num_sig_elem, num_in_bc_seg
     psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
     psi_s = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
@@ -515,7 +515,7 @@ def wave_alloc_current():
     ux_coef = np.empty((dof_u,num_elem))
     uy_coef = np.empty((dof_u,num_elem))
 
-def wave_alloc_current64()L
+def wave_alloc_current64():
     global qx_coef, qy_coef
     global dof_u, num_elem
     qx_coef = np.empty((dof_u,num_elem))
