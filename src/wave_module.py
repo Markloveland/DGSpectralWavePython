@@ -9,11 +9,18 @@ class node_type:
 class elem_type:
     def __init__(self, num_elem):
         self.node= np.zeros((num_elem,3))
-        self.area=99.9
+        self.area= np.empty(num_elem)
         self.global_edge=np.zeros((num_elem,3))
-        self.global_elem=0
+        self.global_elem= np.zeros(num_elem)
         self.global_vert=np.zeros((num_elem,3))
-
+class edges_type:
+    def __init__(self, num_edges):
+        self.node = np.zeros((num_edges,2))
+        self.element= np.zeros((num_edges,2))
+        self.local_edge = np.zeros((num_edges,2))
+        self.norm_x = np.empty(num_edges)
+        self.norm_y = np.empty(num_edges)
+        self.length = np.empty(num_edges)
 
 #allocating variables
 def init():
@@ -156,7 +163,6 @@ def init():
     #number of incoming boundary condition segments
     global num_in_bc_seg
     num_in_bc_seg=99
-    #segment number for which incoming wave is specified
     global in_bc_seg
     in_bc_seg=np.empty(99)
     global type_bc #1 pierson-moskowitz spectrum, 2 = jonswap spectrum, 4 = gauss
@@ -391,9 +397,144 @@ def wave_alloc_time():
     delta_RK=np.empty(n_RK_stage)
 
 def wave_alloc_bedges():
-    #ENDED HERE
+    global inter_edge_array, absorb_edge_array, num_in_wave_edges, in_wave_edge_array
+    global edge, num_edges, num_in_bc_sec
+    inter_edge_array=np.zeros(num_edges)
+    absorb_edge_array=np.zeros(num_edges)
+    num_in_wave_edges=np.zeros(num_in_bc_sec)
+    in_wave_edge_array=np.zeros((num_edges, num_in_bc_edges))
+    edge=edges_type(num_edges)
 
 def wave_p_low_p_high():
     global num_quad_XY_area, num_quad_XY_edge, dof_XY, dof_SP, num_quad_t_edge, num_quad_s_edge,num_quad_sp_area \
         p_elem, q_elem, wet_dry_flag
+    global p_low, p_high, q_low, q_high, num_elem, num_theta_elem, num_sig_elem
+    num_quad_XY_area=np.zeros(p_high)
+    num_quad_XY_edge=np.zeros(p_high)
+    dof_XY= np.zeros(p_high)
+    dof_SP= np.zeros(q_high)
+    num_quad_t_edge= np.zeros(q_high)
+    num_quad_s_edge= np.zeros(q_high)
+    num_quad_sp_area= np.zero(q_high)
+    p_elem= np.zeros(num_elem)
+    q_elem = np.zeros((num_theta_elem, num_sigma_elem, num_elem))
+    wet_dry_flag = np.zeros(num_elem)
+
+def wave_alloc_area_gauss():
+    global x_QP_area, y_QP_area, weight_XY_area, num_quad_XY_area
+    global p_high
+    x_QP_area=np.empty((num_quad_XY_area[p_high-1],p_high))
+    y_QP_area=np.empty((num_quad_XY_area[p_high-1],p_high))
+    weight_XY_area=np.empty((num_quad_XY_area[p_high-1],p_high))
+
+def wave_alloc_ortho_area():
+    global phi_area, dof_XY, num_quad_XY_area, ds_phi, dr_phi, phi_corner, phi_mid, phi_center, w_phi_area
+    global p_high
+    phi_area=np.empty((dof_XY[p_high-1],num_quad_XY_area[p_high-1],p_high))
+    ds_phi=np.empty((dof_XY[p_high-1],num_quad_XY_area[p_high-1],p_high))
+    dr_phi=np.empty((dof_XY[p_high-1],num_quad_XY_area[p_high-1],p_high))
+    phi_corner=np.empty((dof_XY[p_high-1],3))
+    phi_mid=np.empty((dof_XY[p_high-1],3))
+    phi_center=np.empty(dof_XY[p_high-1])
+    w_phi_area=np.empty((dof_XY[p_high-1],num_quad_XY_area[p_high-1],p_high))
+
+def wave_alloc_edge_gauss():
+    global x_QP_edge, weight_XY_edge, phi_edge, m_inv, inv_M_mat, w_phi_edge
+    global num_quad_XY_edge, dof_XY, dof_SP, p_high, q_high
+    x_QP_edge=np.empty((num_quad_XY_edge[p_high-1],p_high))
+    weight_XY_edge=np.empty((num_quad_XY_edge[p_high-1],p_high))
+    phi_edge=np.empty((dof_XY[p_high-1],num_quad_XY_edge[p_high-1],3,p_high))
+    m_inv= np.empty(dof_XY[p_high-1])
+    inv_M_mat=np.empty((dof_SP[q_high-1],dof_XY[p_high-1]))
+    w_phi_edge=np.empty((dof_XY[p_high-1],num_quad_XY_edge[p_high-1],3,p_high))
+
+def wave_alloc_spectral_qp():
+    global is_QP_edge, it_QP_edge, weight_t_edge, weight_s_edge, is_QP_area, it_QP_area, weight_SP_area, \
+        sigma_QP_edge, theta_QP_edge, sigma_QP_area, theta_QP_area, sin_th_QP_edge, sin_th_QP_area, \
+        cos_th_QP_edge, cos_th_QP_area
+    global num_quad_s_edge, num_quad_t_edge, num_quad_SP_area, 
+    global q_high, num_sig_elem, num_theta_elem
+    is_QP_edge = np.empty((num_quad_s_edge[q_high-1],q_high))
+    it_QP_edge = np.empty((num_quad_t_edge[q_high-1],q_high))
+    weight_t_edge = np.empty((num_quad_t_edge[q_high-1],q_high))
+    weight_s_edge = np.empty((num_quad_s_edge[q_high-1],q_high))
+    is_QP_area = np.empty((num_quad_SP_area[q_high-1],q_high))
+    it_QP_area = np.empty((num_quad_SP_area[q_high-1],q_high))
+    weight_SP_area = np.empty((num_quad_SP_area[q_high-1],q_high))
+    sigma_QP_edge = np.empty((num_quad_s_edge[q_high-1],num_sig_elem,q_high))
+    theta_QP_edge = np.empty((num_quad_t_edge[q_high-1],num_theta_elem,q_high))
+    sigma_QP_area = np.empty((num_quad_SP_area[q_high-1],num_sig_elem,q_high))
+    theta_QP_area = np.empty((num_quad_SP_area[q_high-1],num_theta_elem,q_high))
+    sin_th_QP_edge = np.empty((num_quad_t_edge[q_high-1], num_theta_elem,q_high))
+    sin_th_QP_area = np.empty((num_quad_SP_area[q_high-1],num_theta_elem,q_high))
+    cos_th_QP_edge = np.empty((num_quad_t_edge[q_high-1],num_theta_elem,q_high))
+    cos_th_QP_area = np.empty((num_quad_SP_area[q_high-1],num_theta_elem,q_high))
+
+def wave_alloc_sp_basis():
+    global psi_sp, psi_s, psi_t, ds_psi_sp, ds_psi_s, ds_psi_t, dt_psi_sp, dt_psi_s, dt_psi_t, psi_end_s, \
+        psi_end_t, n_bc, n_bc_alpha, w_psi_sp, w_psi_s1, w_psi_t1, w_psi_s2, w_psi_t2, wds_psi_sp, wdt_psi_sp
+    global dof_SP, num_quad_SP_area, num_quad_s_edge, num_quad_t_edge,
+    global q_high, num_theta_elem, num_sig_elem, num_in_bc_seg
+    psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+    psi_s = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
+    psi_t = np.empty((dof_SP[q_high-1],num_quad_t_edge[q_high-1],q_high))
+    ds_psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+    ds_psi_s = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
+    ds_psi_t = np.empty((dof_SP[q_high-1],num_quad_t_edge[q_high-1],q_high))
+    dt_psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+    dt_psi_s = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
+    dt_psi_t = np.empty((dof_SP[q_high-1],num_quad_t_edge[q_high-1],q_high))
+    psi_end_s = np.empty((dof_SP[q_high-1],2))
+    psi_end_t = np.empty((dof_SP[q_high-1],2))
+    n_bc = np.empty((num_quad_SP_area[q_high-1],num_theta_elem,num_sig_elem,q_high,num_in_bc_seg))
+    n_bc_alpha = np.empty((dof_SP[q_high-1],num_theta_elem,num_sig_elem,q_high,num_in_bc_seg))
+    w_psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+    w_psi_s1 = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
+    w_psi_t1 = np.empty((dof_SP[q_high-1],num_quad_t_edge[q_high-1],q_high))
+    w_psi_s2 = np.empty((dof_SP[q_high-1],num_quad_s_edge[q_high-1],q_high))
+    w_psi_t2 = np.empty((dof_SP[q_high-1],num_quad_t_edge[q_high-1],q_high))
+    wds_psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+    wdt_psi_sp = np.empty((dof_SP[q_high-1],num_quad_SP_area[q_high-1],q_high))
+
+def wave_alloc_prep():
+    global alpha_N, RHS
+    global dof_SP, dof_XY
+    global q_high, p_high, num_theta_elem, num_sig_elem, num_elem, n_RK_stage
+    alpha_N = np.empty((dof_SP[q_high-1], dof_XY[p_high-1], num_theta_elem, num_sig_elem, num_elem, n_RK_stage+1))
+    RHS = np.empty((dof_SP[q_high-1], dof_XY[p_high-1], num_theta_elem, num_sig_elem, num_elem, n_RK_stage))
+
+def wave_alloc_depth():
+    global bath_coef, d_coef
+    global dof_d, num_elem
+    bath_coef = np.empty((dof_d, num_elem))
+    d_coef = np.empty((dof_d, num_elem))
+
+def wave_alloc_current():
+    global ux_coef, uy_coef
+    global dof_u, num_elem
+    ux_coef = np.empty((dof_u,num_elem))
+    uy_coef = np.empty((dof_u,num_elem))
+
+def wave_alloc_current64()L
+    global qx_coef, qy_coef
+    global dof_u, num_elem
+    qx_coef = np.empty((dof_u,num_elem))
+    qy_coef = np.empty((dof_u,num_elem))
+
+def wave_alloc_mnndel():
+    global node_2_elem
+    global num_nodes, mnndel
+    node_2_elem = np.zeros((num_nodes, mnndel))
+
+def wave_alloc_sta_elem():
+    global elem_sta
+    global num_sta
+    elem_sta=np.zeros(num_sta)
+
+def wave_alloc_sta_2():
+    global phi_sta
+    global dof_XY, p_high, num_sta
+    i=max(3,dof_XY[p_high-1])
+    phi_sta=np.empty((i,num_sta))
+
 
