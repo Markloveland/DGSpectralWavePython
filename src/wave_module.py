@@ -398,7 +398,7 @@ def wave_alloc_time():
 
 def wave_alloc_bedges():
     global inter_edge_array, absorb_edge_array, num_in_wave_edges, in_wave_edge_array
-    global edge, num_edges, num_in_bc_sec
+    global edge, num_edges, num_in_bc_seg
     inter_edge_array=np.zeros(num_edges)
     absorb_edge_array=np.zeros(num_edges)
     num_in_wave_edges=np.zeros(num_in_bc_sec)

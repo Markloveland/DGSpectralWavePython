@@ -21,4 +21,4 @@ wm.cth_max=float(-99999)
 #read input parameter file
 wm.init()
 wr.wave_ReadInput()
-
+print(wm.HS_bc)

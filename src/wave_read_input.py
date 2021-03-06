@@ -28,7 +28,7 @@ def wave_ReadInput():
     #now read parameter input file
     fin=open(inputfile,'r')
     #string with information about run
-    wm.run_ID=fin.readline()
+    wm.run_ID=fin.readline().strip()
     #0 or 1 for stationary run
     wm.stat_flag=int(fin.readline().split('!')[0])
     if wm.stat_flag == 1:
@@ -89,8 +89,45 @@ def wave_ReadInput():
     wm.rad_stress_time_step=int(fin.readline().split('!')[0])
     wm.num_in_bc_seg=int(fin.readline().split('!')[0])
     wm.wave_alloc_boundary()
+    for i in range(wm.num_in_bc_seg):
+        wm.in_bc_seg[i]=int(fin.readline().split('!')[0])
+        wm.type_bc[i]=int(fin.readline().split('!')[0])
+        if wm.type_bc[i]==1 or wm.type_bc[i]==4:
+            wm.HS_bc[i], wm.pk_per_bc[i], wm.sig_fr_bc[i], wm.m_dir_bc[i], wm.ms_bc[i]= \
+                list(map(float, fin.readline().split('!')[0].split(',')))
+            wm.gamma_bc[i]=0.0
+        elif wm.type_bc[i]==2:
+            wm.HS_bc[i], wm.pk_per_bc[i], wm.gamma_bc[i], wm.m_dir_bc[i], wm.ms_bc[i]= \
+                list(map(float, fin.readline().split('!')[0].split(',')))
+            wm.sig_fr_bc[i]=0.0
+    fin.close()
     
+    #declaring names of output files to validate reading input file correctly
+    run_ID_out=wm.run_ID+".out"
+    fout=open(run_ID_out,'w')
 
+    #write out input values for the run:
+    fout.write('Run ID: '+ wm.run_ID+ '\n')
+    if wm.stat_flag==1:
+        fout.write('Stationary run, statFlag = ' + str(wm.stat_flag))
+        fout.write('Perct. of elements required to converge   '+ str(wm.perct_elem))
+        fout.write('Error tolerances: relative ' + str(wm.epsilon_r))
+        ##CAN BE CONTINUED LATERT BUT NOT DOING STATIC RUNS FOR NOW
+    else:
+        fout.write('Non-stationary run, statFlag = ' + str(wm.stat_flag)+'\n')
+    fout.write('Geographic order: \n')
+    fout.write('p = '+ str(wm.p) + ' ' + 'plow = ' + str(wm.p_low)+ ' ' + 'phigh = ' + str(wm.p_high)+'\n')
+    fout.write('spectral order \n')
+    if qm.q_high > 4 :
+        fout.write("WARNING: basis functions not programmed for > 4, so changing qhigh to 4 \n ")
+        wm.q_high=4
+    if qm.q_low > 4 :
+        fout.write("WARNING: basis functions not programmed for > 4, so changing qlow to 4 \n ")
+        wm.q_low=4
+    fout.write('q = '+ str(wm.q) + ' ' + 'qlow = ' + str(wm.q_low)+ ' ' + 'phigh = ' + str(wm.q_high)+'\n')
+    fout.write
+
+    fout.close()
 
     
 
